@@ -1,0 +1,44 @@
+<!-- views/poi.ejs -->
+<div class="form-header">
+
+    <h2>Register a POI</h2>
+    <h4>Submit information of historical and political significance. This can be an event, an incident, a building or any other type of entity.</h4>
+</div>
+
+
+<form method="post" action="/poi" novalidate>
+
+    <div class="form-field <%= errors.title ? 'form-field-invalid' : '' %>">
+        <label for="title">Title</label>
+        <input class="input" id="title" name="title" rows="1" placeholder="Title of the POI" value="<%= data.title %>" autofocus/>
+        <% if (errors.title) { %>
+        <div class="error"><%= errors.title.msg %></div>
+        <% } %>
+    </div>
+
+    <div class="form-field <%= errors.location ? 'form-field-invalid' : '' %>">
+        <label for="location">location</label>
+        <input class="input" id="location" name="location" type="text" placeholder="Where did this happen?" value="<%= data.location %>" />
+        <% if (errors.location) { %>
+        <div class="error"><%= errors.location.msg %></div>
+        <% } %>
+    </div>
+
+    <div class="form-field <%= errors.description ? 'form-field-invalid' : '' %>">
+        <label for="description">Description</label>
+        <textarea class="input" id="description" name="description" rows="10" placeholder="Short description of the POI"><%= data.description %></textarea>
+        <% if (errors.description) { %>
+        <div class="error"><%= errors.description.msg %></div>
+        <% } %>
+    </div>
+
+    <div class="form-field">
+        <label for="links">Relevant Links</label>
+        <textarea class="input" id="links" name="links" rows="4" placeholder="Relevant links separated by comma ','"></textarea>
+    </div>
+
+    <div class="form-actions">
+        <button class="btn" type="submit">Submit</button>
+    </div>
+
+</form>
