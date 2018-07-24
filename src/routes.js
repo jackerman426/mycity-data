@@ -23,9 +23,13 @@ router.post('/poi', [
     check('location')
         .isLength({ min: 1 })
         .withMessage('Location is required'),
+    check('date')
+        .isLength({ min: 1 })
+        .withMessage('Date is required'),
     check('description')
         .isLength({ min: 20 })
-        .withMessage('Description is too short. It needs to be at least 20 characters long.')
+        .withMessage('Description is too short. It needs to be at least 20 characters long.'),
+    check('links')
     ],(req, res) => {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {

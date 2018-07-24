@@ -1,3 +1,4 @@
+'use strict'
 
 const path = require('path');
 const express = require('express');
@@ -6,8 +7,9 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const flash = require('express-flash');
 const validator = require('express-validator');
+const logger = require('node-commons').logger;
 
-const bodyParser = require('body-parser');
+// const bodyParser = require('body-parser');
 
 const routes = require('./routes');
 const app = express();
@@ -18,7 +20,7 @@ app.set('view engine', 'ejs');
 const middlewares = [
   layout(),
   express.static(path.join(__dirname, 'public')),
-  bodyParser.urlencoded(),
+  // bodyParser.urlencoded(),
   cookieParser(),
   validator(),
   session({
@@ -39,10 +41,10 @@ app.use((req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  console.error(err.stack)
+    logger.error(err.stack)
   res.status(500).send('Something broke!')
 });
 
 app.listen(3000, () => {
-  console.log(`App running at http://localhost:3000`)
+    logger.info(`App running at http://localhost:3000`)
 });

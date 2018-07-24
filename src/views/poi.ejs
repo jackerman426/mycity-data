@@ -24,6 +24,15 @@
         <% } %>
     </div>
 
+    <div class="form-field <%= errors.date ? 'form-field-invalid' : '' %>">
+        <label for="date">date</label>
+        <input class="input" id="date" name="date" type="date" placeholder="Where did this happen?" value="<%= data.date %>" />
+        <% if (errors.date) { %>
+        <div class="error"><%= errors.date.msg %></div>
+        <% } %>
+    </div>
+
+
     <div class="form-field <%= errors.description ? 'form-field-invalid' : '' %>">
         <label for="description">Description</label>
         <textarea class="input" id="description" name="description" rows="10" placeholder="Short description of the POI"><%= data.description %></textarea>
@@ -34,7 +43,7 @@
 
     <div class="form-field">
         <label for="links">Relevant Links</label>
-        <textarea class="input" id="links" name="links" rows="4" placeholder="Relevant links separated by comma ','"></textarea>
+        <textarea class="input" id="links" name="links" rows="4" placeholder="Relevant links separated by comma ','"><%= data.links %></textarea>
     </div>
 
     <div class="form-actions">
