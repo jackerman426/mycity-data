@@ -1,0 +1,81 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "myCity",
+    "description": "",
+    "version": "1.0"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "basePath": "/",
+  "produces": [
+    "application/json"
+  ],
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "authorization",
+      "in": "header"
+    }
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Checks the availability of the service",
+        "description": "Returns 'up' if successful",
+        "tags": [
+          "App functions"
+        ],
+        "responses": {
+          "200": {
+            "description": "The service's accessibility function",
+            "schema": {
+              "properties": {
+                "result": {
+                  "type": "boolean"
+                },
+                "error_message": {
+                  "type": "string"
+                },
+                "error_code": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "data": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Error": {
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        },
+        "result": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

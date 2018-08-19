@@ -1,50 +1,69 @@
 'use strict'
+/*
+ * Thin express server, this module is for bootstrapping the application.
+ * Bootstrap process consists of fetching config, defining app dependencies
+ * and express server to a host and port
+ */
+require('dotenv').config()
+const path = require('path')
+const async = require('async')
 
-const path = require('path');
-const express = require('express');
-const layout = require('express-layout');
-const cookieParser = require('cookie-parser');
-const session = require('express-session');
-const flash = require('express-flash');
-const validator = require('express-validator');
-const logger = require('node-commons').logger;
+const commons = require('node-commons')
+const mongooseConnector = commons.db.mongoose
+const logger = commons.logger
 
-// const bodyParser = require('body-parser');
+/*
+ * Get configuration and start application.
+ */
+const config = require('./config')
+const app = require('./app')
 
-const routes = require('./routes');
-const app = express();
+/*
+ * START LOGGING THE APPLICATION.
+ */
+logger.initialize(path.resolve('./logs'), config.logs.debug_level)
 
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
+function start () {
+  logger.info('starting express app in ' + config.environment + ' environment...')
 
-const middlewares = [
-  layout(),
-  express.static(path.join(__dirname, 'public')),
-  // bodyParser.urlencoded(),
-  cookieParser(),
-  validator(),
-  session({
-    secret: 'super-secret-key',
-    key: 'super-secret-cookie',
-    resave: false,
-    saveUninitialized: false,
-    cookie: { maxAge: 60000 }
-  }),
-  flash()
-];
-app.use(middlewares);
+  async.parallel({
+    connect_db: function (callback) {
+      /*
+       * Connect to mongoDB through mongoose
+       */
+      mongooseConnector.connectToMongoDb(config.mongodb.uri, config.mongodb.options, function (error) {
+        if (error) {
+          return callback('Unable to connect to mongo', error)
+        } else {
+          return callback(null)
+        }
+      })
+    },
+    start_server: function (callback) {
+      /*
+       * Listening to server, binding to a port and host.
+       */
+      app.expressApp.listen(config.express.port, config.express.ip, function (error) {
+        if (error) {
+          logger.error('Unable to listen for connections', error)
+          process.exit(-1)
+          return callback(error)
+        }
 
-app.use('/', routes);
+        logger.info('Server is listening on ' + config.express.url)
+        return callback(null)
+      })
+    }
+  }, function (error) {
+    if (error) {
+      logger.error(error)
+    } else {
+      logger.info('myCity is ready!')
+    }
+  })
+}
 
-app.use((req, res, next) => {
-  res.status(404).send("Sorry can't find that!")
-});
-
-app.use((err, req, res, next) => {
-    logger.error(err.stack)
-  res.status(500).send('Something broke!')
-});
-
-app.listen(3000, () => {
-    logger.info(`App running at http://localhost:3000`)
-});
+/*
+ * Start the application
+ */
+start()
